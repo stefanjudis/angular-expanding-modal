@@ -10,6 +10,10 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
         <style>
+          *, *::before, *::after {
+            box-sizing : border-box;
+          }
+
           body {
             background : grey;
           }
@@ -29,18 +33,38 @@
           [class^="modal"] {
             position : absolute;
 
-            height : 200px;
             width  : 25%;
+
+            padding : 1em 1em 4em;
 
             background : white;
             z-index : 1;
           }
 
           [class^="modal"] button {
+            position : absolute;
+
+            bottom : 1em;
+            width : calc( 100% - 3em );
+            left : 1em;
+
+            display : block;
             background : red;
             color : white;
 
             border : none;
+          }
+
+          [class^="modal"] .container {
+            opacity : 0;
+
+            transition : opacity .2s ease-in;
+          }
+
+          [class^="modal"].done  .container {
+            opacity : 1;
+
+            transition : opacity .2s ease-in .1s;
           }
 
           .modal__upperLeft {
@@ -101,10 +125,10 @@
 
 
           .transitionOut {
-            transition : opacity .3s ease-out, transform .3s ease-out;
+            transition : opacity .3s ease-in, transform .3s ease-in;
           }
           .transitionIn {
-            transition : opacity .3s ease-in, transform .3s ease-in;
+            transition : opacity .3s ease-out, transform .3s ease-out;
           }
         </style>
     </head>
@@ -116,7 +140,7 @@
             var myApp = angular.module('myApp',[ 'sj.expandingModal' ] );
 
             myApp.controller('DoubleController', ['$scope', 'ExpandingModal', function($scope, ExpandingModal ) {
-              $scope.openModal = function( event, position ) {
+              $scope.openModal = function( event, position, content ) {
                 var className = 'modal';
 
                 if ( position ) {
@@ -124,7 +148,7 @@
                 }
 
                 var modal = ExpandingModal({
-                  template     : '<div class="' + className + '"> foo foo foo<button ng-click="modal.close()">close me</button></div>',
+                  template     : '<div class="' + className + '"><div class="container">' + content + '<button ng-click="modal.close()">close me</button></div></div>',
                   controller   : function () {
                     this.close = modal.deactivate;
                   },
@@ -139,19 +163,19 @@
 
     <div ng-controller="DoubleController" style="position : absolute; top : 50%; left : 50%; transform : translate( -50%, -50% ); text-align : center; width : 450px;">
       <div>
-        <button ng-click="openModal( $event, 'upperLeft' )">open upper left</button>
-        <button ng-click="openModal( $event, 'upperCenter' )">open upper center</button>
-        <button ng-click="openModal( $event, 'upperRight' )">open upper right</button>
+        <button ng-click="openModal( $event, 'upperLeft', 'This is upper left.' )">open upper left</button>
+        <button ng-click="openModal( $event, 'upperCenter', 'This is upper center.' )">open upper center</button>
+        <button ng-click="openModal( $event, 'upperRight', 'This is upper right.' )">open upper right</button>
       </div>
       <div>
-        <button ng-click="openModal( $event, 'middleLeft' )">open middle left</button>
-        <button ng-click="openModal( $event, 'middleCenter' )">open middle center</button>
-        <button ng-click="openModal( $event, 'middleRight' )">open middle right</button>
+        <button ng-click="openModal( $event, 'middleLeft', 'This is middle left.' )">open middle left</button>
+        <button ng-click="openModal( $event, 'middleCenter', 'This is middle center.' )">open middle center</button>
+        <button ng-click="openModal( $event, 'middleRight', 'This is middle right' )">open middle right</button>
       </div>
       <div>
-        <button ng-click="openModal( $event, 'bottomLeft' )">open bottom left</button>
-        <button ng-click="openModal( $event, 'bottomCenter' )">open bottom center</button>
-        <button ng-click="openModal( $event, 'bottomRight' )">open bottom right</button>
+        <button ng-click="openModal( $event, 'bottomLeft', 'This is bottom left' )">open bottom left</button>
+        <button ng-click="openModal( $event, 'bottomCenter', 'This is bottom center' )">open bottom center</button>
+        <button ng-click="openModal( $event, 'bottomRight', 'This is bottom right' )">open bottom right</button>
       </div>
     </div>
 </html>

@@ -112,11 +112,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var transformRule = 'translate3d(' + (startValues.left - endValues.left + transformDiff.x) + 'px, ' + (startValues.top - endValues.top + transformDiff.y) + 'px,' + '0 ) ' + 'scale(' + scaleX + ',' + scaleY + ')';
 
         var listenerFunc = function listener() {
-          if (element) {
-            element[0].classList.remove('transitionOut');
+          element[0].classList.remove('transitionOut');
+          element[0].classList.add('done');
 
-            element[0].removeEventListener('transitionEnd', listenerFunc);
-          }
+          element[0].removeEventListener('transitionend', listenerFunc);
         };
 
         requestAnimationFrame(function () {
@@ -125,6 +124,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           element[0].style.opacity = 0.5;
 
           requestAnimationFrame(function () {
+            element[0].addEventListener('transitionend', listenerFunc, false);
             element[0].classList.add('transitionOut');
             element[0].style.transformOrigin = '.5 .5';
             element[0].style.transform = '';
@@ -176,21 +176,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         element[0].style.opacity = 1;
 
         var listenerFunc = function listener() {
-          if (element) {
-            element[0].classList.remove('transitionIt');
-            element[0].style.opacity = 0;
+          element[0].classList.remove('transitionIn');
+          element[0].classList.add('done');
+          element[0].style.opacity = 0;
 
-            element[0].removeEventListener('transitionEnd', listenerFunc, false);
+          element[0].removeEventListener('transitionend', listenerFunc, false);
 
-            scope.$destroy();
-            scope = null;
-            element.remove();
-            element = null;
-          }
+          scope.$destroy();
+          scope = null;
+          element.remove();
+          element = null;
         };
 
         requestAnimationFrame(function () {
-          element[0].classList.add('transitionIt');
+          element[0].classList.add('transitionIn');
+          element[0].classList.remove('done');
           element[0].style.transform = transformRule;
           element[0].style.opacity = 0;
 

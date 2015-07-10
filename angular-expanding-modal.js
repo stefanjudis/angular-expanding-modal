@@ -25,19 +25,18 @@
             html,
             scope;
 
-        if (config.template) {
-          html = $q.when(config.template);
+        if ( config.template ) {
+          html = $q.when( config.template );
         } else {
-          html = $http.get(config.templateUrl, {
-            cache: $templateCache
-          }).
-          then(function (response) {
+          html = $http.get( config.templateUrl, {
+            cache : $templateCache
+          } ).then( function ( response ) {
             return response.data;
-          });
+          } );
         }
 
-        function activate ( target, locals) {
-          return html.then(function (html) {
+        function activate( target, locals) {
+          return html.then( function( html ) {
             if ( ! element ) {
               attach( html, target, locals );
             }
@@ -117,11 +116,10 @@
                               'scale(' + scaleX + ',' + scaleY + ')';
 
           var listenerFunc = function listener() {
-            if ( element ) {
-              element[ 0 ].classList.remove( 'transitionOut' );
+            element[ 0 ].classList.remove( 'transitionOut' );
+            element[ 0 ].classList.add( 'done' );
 
-              element[ 0 ].removeEventListener( 'transitionEnd', listenerFunc );
-            }
+            element[ 0 ].removeEventListener( 'transitionend', listenerFunc );
           };
 
           requestAnimationFrame( () => {
@@ -130,10 +128,12 @@
             element[ 0 ].style.opacity         = 0.5;
 
             requestAnimationFrame( () => {
+              element[ 0 ].addEventListener( 'transitionend', listenerFunc, false );
               element[ 0 ].classList.add( 'transitionOut' );
               element[ 0 ].style.transformOrigin = '.5 .5'
               element[ 0 ].style.transform = '';
               element[ 0 ].style.opacity   = 1;
+
             } );
           } );
         }
@@ -187,21 +187,21 @@
           element[ 0 ].style.opacity   = 1;
 
           var listenerFunc = function listener() {
-            if ( element ) {
-              element[ 0 ].classList.remove( 'transitionIt' );
-              element[ 0 ].style.opacity   = 0;
+            element[ 0 ].classList.remove( 'transitionIn' );
+            element[ 0 ].classList.add( 'done' );
+            element[ 0 ].style.opacity   = 0;
 
-              element[ 0 ].removeEventListener( 'transitionEnd', listenerFunc, false );
+            element[ 0 ].removeEventListener( 'transitionend', listenerFunc, false );
 
-              scope.$destroy();
-              scope = null;
-              element.remove();
-              element = null;
-            }
+            scope.$destroy();
+            scope = null;
+            element.remove();
+            element = null;
           };
 
           requestAnimationFrame( () => {
-            element[ 0 ].classList.add( 'transitionIt' );
+            element[ 0 ].classList.add( 'transitionIn' );
+            element[ 0 ].classList.remove( 'done' );
             element[ 0 ].style.transform = transformRule;
             element[ 0 ].style.opacity   = 0;
 
