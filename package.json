@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps",
+    "uglify": "uglifyjs angular-expanding-modal-es5.js -o angular-expanding-modal.min.js",
+    "dev": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps --watch",
+    "sync": "browser-sync start --files 'angular-expanding-modal-es5.js,index.html' --server",
+    "build": "npm run babel && npm run uglify"
   },
   "repository": {
     "type": "git",
@@ -15,5 +20,13 @@
   "bugs": {
     "url": "https://github.com/stefanjudis/angular-expanding-modal/issues"
   },
-  "homepage": "https://github.com/stefanjudis/angular-expanding-modal#readme"
+  "homepage": "https://github.com/stefanjudis/angular-expanding-modal#readme",
+  "dependencies": {
+    "angular": "^1.4.2"
+  },
+  "devDependencies": {
+    "babel": "^5.6.14",
+    "browser-sync": "^2.7.13",
+    "uglify-js": "^2.4.23"
+  }
 }

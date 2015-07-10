@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Anuglar-expanding-modal</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <style>
+          body {
+            background : grey;
+          }
+
+          button {
+            background : white;
+            color : red;
+
+            border : none;
+
+            padding : 1em;
+            margin : .5em;
+
+            width : 12em;
+          }
+
+          [class^="modal"] {
+            position : absolute;
+
+            height : 200px;
+            width  : 25%;
+
+            background : white;
+            z-index : 1;
+          }
+
+          [class^="modal"] button {
+            background : red;
+            color : white;
+
+            border : none;
+          }
+
+          .modal__upperLeft {
+            top : 5%;
+            left : 5%;
+
+          }
+
+          .modal__upperCenter {
+            top : 5%;
+            left : 50%;
+
+            transform : translate3d( -50%, 0, 0 );
+          }
+
+          .modal__upperRight {
+            right : 5%;
+            top : 5%;
+          }
+
+          .modal__middleLeft {
+            top : 50%;
+            left : 5%;
+
+            transform : translate3d( 0, -50%, 0 );
+          }
+
+          .modal__middleCenter {
+            top : 50%;
+            left : 50%;
+
+            transform : translate3d( -50%, -50%, 0 );
+          }
+
+          .modal__middleRight {
+            right : 5%;
+            top : 50%;
+
+            transform : translate3d( 0, -50%, 0 );
+          }
+
+          .modal__bottomLeft {
+            left : 5%;
+            bottom : 5%;
+          }
+
+          .modal__bottomCenter {
+            left : 50%;
+            bottom : 5%;
+
+            transform : translate3d( -50%, 0, 0 );
+          }
+
+          .modal__bottomRight {
+            right : 5%;
+            bottom : 5%;
+          }
+
+
+          .transitionOut {
+            transition : opacity .3s ease-out, transform .3s ease-out;
+          }
+          .transitionIn {
+            transition : opacity .3s ease-in, transform .3s ease-in;
+          }
+        </style>
+    </head>
+    <body ng-app="myApp">
+        <p>Hello world! This is angular-expanding-modal.</p>
+        <script src="node_modules/angular/angular.js"></script>
+        <script src="angular-expanding-modal-es5.js"></script>
+        <script>
+            var myApp = angular.module('myApp',[ 'sj.expandingModal' ] );
+
+            myApp.controller('DoubleController', ['$scope', 'ExpandingModal', function($scope, ExpandingModal ) {
+              $scope.openModal = function( event, position ) {
+                var className = 'modal';
+
+                if ( position ) {
+                  className += '__' + position;
+                }
+
+                var modal = ExpandingModal({
+                  template     : '<div class="' + className + '"> foo foo foo<button ng-click="modal.close()">close me</button></div>',
+                  controller   : function () {
+                    this.close = modal.deactivate;
+                  },
+                  controllerAs : 'modal'
+                });
+
+                modal.activate( event.target, {} );
+              };
+            }]);
+        </script>
+    </body>
+
+    <div ng-controller="DoubleController" style="position : absolute; top : 50%; left : 50%; transform : translate( -50%, -50% ); text-align : center; width : 450px;">
+      <div>
+        <button ng-click="openModal( $event, 'upperLeft' )">open upper left</button>
+        <button ng-click="openModal( $event, 'upperCenter' )">open upper center</button>
+        <button ng-click="openModal( $event, 'upperRight' )">open upper right</button>
+      </div>
+      <div>
+        <button ng-click="openModal( $event, 'middleLeft' )">open middle left</button>
+        <button ng-click="openModal( $event, 'middleCenter' )">open middle center</button>
+        <button ng-click="openModal( $event, 'middleRight' )">open middle right</button>
+      </div>
+      <div>
+        <button ng-click="openModal( $event, 'bottomLeft' )">open bottom left</button>
+        <button ng-click="openModal( $event, 'bottomCenter' )">open bottom center</button>
+        <button ng-click="openModal( $event, 'bottomRight' )">open bottom right</button>
+      </div>
+    </div>
+</html>
