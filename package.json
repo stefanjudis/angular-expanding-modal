@@ -1,0 +1,19 @@
+{
+  "name": "angular-expanding-modal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefanjudis/angular-expanding-modal.git"
+  },
+  "author": "stefan judis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefanjudis/angular-expanding-modal/issues"
+  },
+  "homepage": "https://github.com/stefanjudis/angular-expanding-modal#readme"
+}
