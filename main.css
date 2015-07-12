@@ -6,8 +6,16 @@ html, body {
   height : 100%;
 }
 
+a, a:visited {
+  color : #00BCD4;
+}
+
 body {
   font-family : 'Roboto','Helvetica','Arial',sans-serif!important;
+  color : #888;
+  font-weight : 200;
+
+  line-height : 1.5;
 }
 
 .button {
@@ -78,6 +86,7 @@ body {
 
 .presentation-container {
   position : relative;
+  max-width : 50em;
 }
 
 [class^="modal"] {
@@ -130,6 +139,8 @@ script.is-active {
   padding : 1em;
 
   margin-bottom : 1em;
+
+  color : #444;
 }
 
 [class^="modal"] .container {

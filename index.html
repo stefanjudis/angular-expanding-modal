@@ -62,6 +62,8 @@
               </g>
           </svg>
           <h1>Angular Expanding Modal</h1>
+          <p>Angular Expanding Modal used the <a href="https://aerotwist.com/blog/flip-your-animations/">FLIP</a> animation technique by <a href="https://twitter.com/aerotwist">Paul Lewis</a> to animate the modals. The idea is that it figures out the animation itself. The appended modal only has to get some style and all the steps between clicked button and modal are resolved via CSS transforms.</p>
+          <p>For detailed information you can check the <a href="https://github.com/stefanjudis/angular-expanding-modal">Readme</a>.</p>
         </div>
         <div ng-controller="BodyController as BodyController">
           <h2>Append modals to body</h2>
@@ -111,7 +113,7 @@
             '</div>' +
           '</div>' +
         '</div>',
-        controller   : function ( $scope ) {
+        controller   : function () {
           this.close   = modal.close;
           this.content = content;
         },
@@ -163,7 +165,7 @@
           '</div>' +
         '</div>',
         container    : event.target.parentNode.parentNode,
-        controller   : function ( $scope ) {
+        controller   : function () {
           this.close   = modal.close;
           this.content = content;
         },
@@ -190,10 +192,10 @@
     this.openModal = function( event, content ) {
       var modal = ExpandingModal.create({
         templateUrl  : 'partial.html',
-        controller   : [ '$scope', function ( $scope ) {
+        controller   : function () {
           this.close     = modal.close;
           this.content   = content;
-        } ],
+        },
         controllerAs : 'modal'
       });
 
