@@ -106,6 +106,7 @@
               '<h2 >Appended to Body</h2>' +
             '</div>' +
             '<p>{{ modal.content }}</p>' +
+            '<p><strong>All controlled via CSS only</strong></p>' +
             '<div>' +
               '<button class="button" ng-click="modal.close()">' +
                 'Close' +
@@ -130,13 +131,9 @@
         <div ng-controller="ContainerController as ContainerController">
           <div class="button-container">
             <div>
-              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerTop', 'This is container top' )">open top</button>
-            </div>
-            <div>
+              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerLeft', 'This is container top' )">open left</button>
               <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerFull', 'This is full container' )">open in full</button>
-            </div>
-            <div>
-              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerBottom', 'This is container bottom' )">open bottom</button>
+              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerRight', 'This is container bottom' )">open right</button>
             </div>
             <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'containerCode' )">Toggle Code</button>
           </div>

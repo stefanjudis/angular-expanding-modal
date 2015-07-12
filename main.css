@@ -18,6 +18,11 @@ body {
   line-height : 1.5;
 }
 
+strong {
+  font-weight : 400;
+}
+
+
 .button {
   font-family : 'Roboto','Helvetica','Arial',sans-serif!important;
   background : #00BCD4;
@@ -51,7 +56,7 @@ body {
 .button__grey {
 
   font-family : 'Roboto','Helvetica','Arial',sans-serif!important;
-  background : #ccc;
+  background : #ddd;
   color      : #555;
 
   width : 15em;
@@ -70,7 +75,7 @@ body {
 }
 
 .button__grey:hover, .button__grey:focus {
-  background : #ddd;
+  background : #eee;
   box-shadow : 0 .125em .25em #aaa;
 }
 
@@ -82,6 +87,8 @@ body {
 
 .button-container {
   position : relative;
+
+  padding : 1em 0;
   margin-bottom : 1em;
 }
 
@@ -110,6 +117,8 @@ body {
   text-align : center;
 
   flex-direction : column;
+
+  padding : 3em 0;
 }
 
 .card {
@@ -248,24 +257,26 @@ h2 {
   z-index : 5;
 }
 
-.modal__inContainerTop {
+.modal__inContainerLeft {
   position : absolute;
 
   top : 0;
   left : 0;
-  right : 0;
+  bottom : 0;
 
-  width : auto;
+  width : 40%;
 }
 
-.modal__inContainerBottom {
+.modal__inContainerRight {
   position : absolute;
 
   bottom : 0;
-  left : 0;
+  top : 0;
   right : 0;
 
-  width : auto;
+  width : 40%;
+
+  overflow : scroll;
 }
 
 .modal__inContainerFull {
