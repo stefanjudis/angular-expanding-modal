@@ -128,7 +128,7 @@
             _setPrefixedProperty(element[0], 'transform', transformRule);
             _setPrefixedProperty(element[0], 'transformOrigin', '0 0');
 
-            element[0].style.opacity = 0.5;
+            element[0].style.opacity = 0.25;
 
             requestAnimationFrame(function () {
 
