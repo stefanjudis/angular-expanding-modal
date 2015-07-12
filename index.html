@@ -53,7 +53,8 @@
               '</div>',
               container    : event.target.parentNode,
               controller   : function ( $scope ) {
-                this.close = modal.close;
+                this.close   = modal.close;
+                this.content = content;
               },
               controllerAs : 'modal'
             });
@@ -146,13 +147,13 @@
         <h2>Append modals to container</h2>
         <div class="button-container">
           <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerTop', 'This is bottom right' )">open top</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerTop', 'This is container top' )">open top</button>
           </div>
           <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerFull', 'This is bottom right' )">open in full</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerFull', 'This is full container' )">open in full</button>
           </div>
           <div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerBottom', 'This is bottom right' )">open bottom</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerBottom', 'This is container bottom' )">open bottom</button>
           </div>
         </div>
         <h2>Load template partials</h2>

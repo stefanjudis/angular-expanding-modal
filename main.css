@@ -109,20 +109,20 @@ h2 {
 }
 
 .modal__upperLeft {
-  top  : 10%;
+  top  : 5%;
   left : 5%;
 
 }
 
 .modal__upperCenter {
-  top  : 10%;
+  top  : 5%;
   left : 50%;
 
   transform : translate3d( -50%, 0, 0 );
 }
 
 .modal__upperRight {
-  top   : 10%;
+  top   : 5%;
   right : 5%;
 }
 
