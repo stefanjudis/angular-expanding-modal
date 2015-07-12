@@ -64,7 +64,6 @@
             }
           }
 
-
           $compile( element )( scope );
 
           element[ 0 ].style.opacity = 0;

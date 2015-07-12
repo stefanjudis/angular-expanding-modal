@@ -43,6 +43,7 @@
                   '<div>' +
                     '<h2 >Appended to container</h2>' +
                   '</div>' +
+                  '<p>{{ modal.content }}</p>' +
                   '<div>' +
                     '<button ng-click="modal.close()">' +
                       'Close' +
@@ -73,6 +74,7 @@
                   '<div>' +
                     '<h2 >Appended to body</h2>' +
                   '</div>' +
+                  '<p>{{ modal.content }}</p>' +
                   '<div>' +
                     '<button ng-click="modal.close()">' +
                       'Close' +
@@ -81,9 +83,21 @@
                 '</div>' +
               '</div>',
               controller   : [ '$scope', function ( $scope ) {
-                this.close = modal.close;
+                this.close   = modal.close;
                 this.content = content;
-                $scope.foo = 'fooao';
+              } ],
+              controllerAs : 'modal'
+            });
+
+            modal.open( event.target );
+          };
+
+          $scope.openModalWithTemplateUrl = function( event, content ) {
+            var modal = ExpandingModal.create({
+              templateUrl  : 'partial.html',
+              controller   : [ '$scope', function ( $scope ) {
+                this.close     = modal.close;
+                this.content   = content;
               } ],
               controllerAs : 'modal'
             });
@@ -139,6 +153,12 @@
           </div>
           <div>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerBottom', 'This is bottom right' )">open bottom</button>
+          </div>
+        </div>
+        <h2>Load template partials</h2>
+        <div class="button-container">
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalWithTemplateUrl( $event, 'This is middle center' )">open with partial</button>
           </div>
         </div>
       </section>
