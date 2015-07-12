@@ -86,8 +86,8 @@
             <div>
               <button class="button" ng-click="BodyController.openModal( $event, 'fullScreen', 'This is bottom right' )">open fullscreen</button>
             </div>
+            <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'bodyCode' )">Toggle Code</button>
           </div>
-          <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'bodyCode' )">Toggle Code</button>
           <script ng-class="{ 'is-active' : AppController.isActive( 'bodyCode' ) }">
 ( function( window ) {
   window.app.controller( 'BodyController', [ 'ExpandingModal', function( ExpandingModal ) {
@@ -138,8 +138,8 @@
             <div>
               <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerBottom', 'This is container bottom' )">open bottom</button>
             </div>
+            <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'containerCode' )">Toggle Code</button>
           </div>
-          <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'containerCode' )">Toggle Code</button>
           <script ng-class="{ 'is-active' : AppController.isActive( 'containerCode' ) }">
 ( function( window ) {
   window.app.controller( 'ContainerController', [ 'ExpandingModal', function( ExpandingModal ) {
@@ -184,8 +184,8 @@
             <div>
               <button class="button" ng-click="PartialController.openModal( $event, 'This is middle center' )">open with partial</button>
             </div>
+            <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'partialCode' )">Toggle Code</button>
           </div>
-          <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'partialCode' )">Toggle Code</button>
           <script ng-class="{ 'is-active' : AppController.isActive( 'partialCode' ) }">
 ( function( window ) {
   window.app.controller( 'PartialController', [ 'ExpandingModal', function( ExpandingModal ) {
