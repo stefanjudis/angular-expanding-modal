@@ -22,93 +22,33 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
     <link rel="stylesheet" href="main.min.css">
   </head>
-  <body ng-app="myApp">
+  <body>
   <a href="https://github.com/stefanjudis/angular-expanding-modal"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.min.js"></script>
     <script src="angular-expanding-modal-es5.js"></script>
     <script>
-        var myApp = angular.module('myApp',[ 'sj.expandingModal' ] );
+      ( function( ng, window ) {
+        window.app = angular.module('app',[ 'sj.expandingModal' ] );
 
-        myApp.controller('DoubleController', ['$scope', 'ExpandingModal', function($scope, ExpandingModal ) {
-          $scope.openModalInContainer = function( event, position, content ) {
-            var className = 'modal';
+        app.controller( 'AppController', function() {
+          var sections = {
+            bodyCode      : { active : false },
+            containerCode : { active : false },
+            partialCode   : { active : false }
+          }
 
-            if ( position ) {
-              className += '__' + position;
-            }
+          this.toggleActive = function( sectionName ) {
+            sections[ sectionName ].active = ! sections[ sectionName ].active;
+          }
 
-            var modal = ExpandingModal.create({
-              template     :  '<div class="' + className + ' card">' +
-                '<div class="container">' +
-                  '<div>' +
-                    '<h2 >Appended to container</h2>' +
-                  '</div>' +
-                  '<p>{{ modal.content }}</p>' +
-                  '<div>' +
-                    '<button ng-click="modal.close()">' +
-                      'Close' +
-                    '</button>' +
-                  '</div>' +
-                '</div>' +
-              '</div>',
-              container    : event.target.parentNode.parentNode,
-              controller   : function ( $scope ) {
-                this.close   = modal.close;
-                this.content = content;
-              },
-              controllerAs : 'modal'
-            });
-
-            modal.open( event.target );
-          };
-
-          $scope.openModal = function( event, position, content ) {
-            var className = 'modal';
-
-            if ( position ) {
-              className += '__' + position;
-            }
-
-            var modal = ExpandingModal.create({
-              template     :  '<div class="' + className + ' card">' +
-                '<div class="container">' +
-                  '<div>' +
-                    '<h2 >Appended to body</h2>' +
-                  '</div>' +
-                  '<p>{{ modal.content }}</p>' +
-                  '<div>' +
-                    '<button ng-click="modal.close()">' +
-                      'Close' +
-                    '</button>' +
-                  '</div>' +
-                '</div>' +
-              '</div>',
-              controller   : [ '$scope', function ( $scope ) {
-                this.close   = modal.close;
-                this.content = content;
-              } ],
-              controllerAs : 'modal'
-            });
-
-            modal.open( event.target );
-          };
-
-          $scope.openModalWithTemplateUrl = function( event, content ) {
-            var modal = ExpandingModal.create({
-              templateUrl  : 'partial.html',
-              controller   : [ '$scope', function ( $scope ) {
-                this.close     = modal.close;
-                this.content   = content;
-              } ],
-              controllerAs : 'modal'
-            });
-
-            modal.open( event.target );
-          };
-        } ] );
+          this.isActive = function( sectionName ) {
+            return sections[ sectionName ].active;
+          }
+        } );
+      } )( window.angular, window );
     </script>
-    <main class="flex-container">
-      <section class="presentation-container" ng-controller="DoubleController">
+    <main ng-app="app" class="flex-container">
+      <section class="presentation-container" ng-controller="AppController as AppController">
         <div>
           <svg width="169px" height="125px" viewBox="0 0 169 125">
               <desc>Logo of Angular Expanding Modals</desc>
@@ -123,44 +63,145 @@
           </svg>
           <h1>Angular Expanding Modal</h1>
         </div>
-        <h2>Append modals to body</h2>
-        <div class="button-container">
-          <div>
-            <button ng-click="openModal( $event, 'upperLeft', 'This is upper left.' )">open upper left</button>
-            <button ng-click="openModal( $event, 'upperCenter', 'This is upper center.' )">open upper center</button>
-            <button ng-click="openModal( $event, 'upperRight', 'This is upper right.' )">open upper right</button>
+        <div ng-controller="BodyController as BodyController">
+          <h2>Append modals to body</h2>
+          <div class="button-container">
+            <div>
+              <button class="button" ng-click="BodyController.openModal( $event, 'upperLeft', 'This is upper left.' )">open upper left</button>
+              <button class="button" ng-click="BodyController.openModal( $event, 'upperCenter', 'This is upper center.' )">open upper center</button>
+              <button class="button" ng-click="BodyController.openModal( $event, 'upperRight', 'This is upper right.' )">open upper right</button>
+            </div>
+            <div>
+              <button class="button" ng-click="BodyController.openModal( $event, 'middleLeft', 'This is middle left.' )">open middle left</button>
+              <button class="button" ng-click="BodyController.openModal( $event, 'middleCenter', 'This is middle center.' )">open middle center</button>
+              <button class="button" ng-click="BodyController.openModal( $event, 'middleRight', 'This is middle right' )">open middle right</button>
+            </div>
+            <div>
+              <button class="button" ng-click="BodyController.openModal( $event, 'bottomLeft', 'This is bottom left' )">open bottom left</button>
+              <button class="button" ng-click="BodyController.openModal( $event, 'bottomCenter', 'This is bottom center' )">open bottom center</button>
+              <button class="button" ng-click="BodyController.openModal( $event, 'bottomRight', 'This is bottom right' )">open bottom right</button>
+            </div>
+            <div>
+              <button class="button" ng-click="BodyController.openModal( $event, 'fullScreen', 'This is bottom right' )">open fullscreen</button>
+            </div>
           </div>
-          <div>
-            <button ng-click="openModal( $event, 'middleLeft', 'This is middle left.' )">open middle left</button>
-            <button ng-click="openModal( $event, 'middleCenter', 'This is middle center.' )">open middle center</button>
-            <button ng-click="openModal( $event, 'middleRight', 'This is middle right' )">open middle right</button>
-          </div>
-          <div>
-            <button ng-click="openModal( $event, 'bottomLeft', 'This is bottom left' )">open bottom left</button>
-            <button ng-click="openModal( $event, 'bottomCenter', 'This is bottom center' )">open bottom center</button>
-            <button ng-click="openModal( $event, 'bottomRight', 'This is bottom right' )">open bottom right</button>
-          </div>
-          <div>
-            <button ng-click="openModal( $event, 'fullScreen', 'This is bottom right' )">open fullscreen</button>
-          </div>
+          <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'bodyCode' )">Toggle Code</button>
+          <script ng-class="{ 'is-active' : AppController.isActive( 'bodyCode' ) }">
+( function( window ) {
+  window.app.controller( 'BodyController', [ 'ExpandingModal', function( ExpandingModal ) {
+    this.openModal = function( event, position, content ) {
+
+      var className = 'modal';
+
+      if ( position ) {
+        className += '__' + position;
+      }
+
+      var modal = ExpandingModal.create({
+        template     :  '<div class="' + className + ' card">' +
+          '<div class="container">' +
+            '<div>' +
+              '<h2 >Appended to Body</h2>' +
+            '</div>' +
+            '<p>{{ modal.content }}</p>' +
+            '<div>' +
+              '<button class="button" ng-click="modal.close()">' +
+                'Close' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>',
+        controller   : function ( $scope ) {
+          this.close   = modal.close;
+          this.content = content;
+        },
+        controllerAs : 'modal'
+      });
+
+      modal.open( event.target );
+    };
+  } ] );
+} )( window );
+          </script>
         </div>
         <h2>Append modals to container</h2>
-        <div class="button-container">
-          <div>
-            <button ng-click="openModalInContainer( $event, 'inContainerTop', 'This is container top' )">open top</button>
+        <div ng-controller="ContainerController as ContainerController">
+          <div class="button-container">
+            <div>
+              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerTop', 'This is container top' )">open top</button>
+            </div>
+            <div>
+              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerFull', 'This is full container' )">open in full</button>
+            </div>
+            <div>
+              <button class="button" ng-click="ContainerController.openModal( $event, 'inContainerBottom', 'This is container bottom' )">open bottom</button>
+            </div>
           </div>
-          <div>
-            <button ng-click="openModalInContainer( $event, 'inContainerFull', 'This is full container' )">open in full</button>
-          </div>
-          <div>
-            <button ng-click="openModalInContainer( $event, 'inContainerBottom', 'This is container bottom' )">open bottom</button>
-          </div>
+          <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'containerCode' )">Toggle Code</button>
+          <script ng-class="{ 'is-active' : AppController.isActive( 'containerCode' ) }">
+( function( window ) {
+  window.app.controller( 'ContainerController', [ 'ExpandingModal', function( ExpandingModal ) {
+    this.openModal = function( event, position, content ) {
+      var className = 'modal';
+
+      if ( position ) {
+        className += '__' + position;
+      }
+
+      var modal = ExpandingModal.create( {
+        template     :  '<div class="' + className + ' card">' +
+          '<div class="container">' +
+            '<div>' +
+              '<h2 >Appended to Container</h2>' +
+            '</div>' +
+            '<p>{{ modal.content }}</p>' +
+            '<div>' +
+              '<button class="button" ng-click="modal.close()">' +
+                'Close' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>',
+        container    : event.target.parentNode.parentNode,
+        controller   : function ( $scope ) {
+          this.close   = modal.close;
+          this.content = content;
+        },
+        controllerAs : 'modal'
+      } );
+
+      modal.open( event.target );
+    };
+  } ] );
+} )( window );
+          </script>
         </div>
         <h2>Load template partials</h2>
-        <div class="button-container">
-          <div>
-            <button ng-click="openModalWithTemplateUrl( $event, 'This is middle center' )">open with partial</button>
+        <div ng-controller="PartialController as PartialController">
+          <div class="button-container">
+            <div>
+              <button class="button" ng-click="PartialController.openModal( $event, 'This is middle center' )">open with partial</button>
+            </div>
           </div>
+          <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'partialCode' )">Toggle Code</button>
+          <script ng-class="{ 'is-active' : AppController.isActive( 'partialCode' ) }">
+( function( window ) {
+  window.app.controller( 'PartialController', [ 'ExpandingModal', function( ExpandingModal ) {
+    this.openModal = function( event, content ) {
+      var modal = ExpandingModal.create({
+        templateUrl  : 'partial.html',
+        controller   : [ '$scope', function ( $scope ) {
+          this.close     = modal.close;
+          this.content   = content;
+        } ],
+        controllerAs : 'modal'
+      });
+
+      modal.open( event.target );
+    };
+  } ] );
+} )( window );
+          </script>
         </div>
       </section>
     </main>

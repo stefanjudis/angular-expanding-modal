@@ -10,7 +10,7 @@ body {
   font-family : 'Roboto','Helvetica','Arial',sans-serif!important;
 }
 
-button {
+.button {
   font-family : 'Roboto','Helvetica','Arial',sans-serif!important;
   background : #00BCD4;
   color : #fff;
@@ -24,7 +24,53 @@ button {
 
   font-weight : 200;
   font-size : 1em;
+
+  will-change : box-shadow;
+
+  transition : background .25s ease-out, box-shadow .25s ease-out;
 }
+
+.button:hover, .button:focus {
+  background : #10CCE4;
+  box-shadow : 0 .125em .25em #aaa;
+}
+
+.button:active {
+  background : #10CCE4;
+  box-shadow : 0 0 .123em #aaa;
+}
+
+.button__grey {
+
+  font-family : 'Roboto','Helvetica','Arial',sans-serif!important;
+  background : #ccc;
+  color      : #555;
+
+  width : 15em;
+
+  border : none;
+
+  padding : .5em;
+  margin : .5em .5em 2em;
+
+  font-weight : 200;
+  font-size : 1em;
+
+  will-change : box-shadow;
+
+  transition : background .25s ease-out, box-shadow .25s ease-out;
+}
+
+.button__grey:hover, .button__grey:focus {
+  background : #ddd;
+  box-shadow : 0 .125em .25em #aaa;
+}
+
+.button__grey:active {
+  background : #bbb;
+  box-shadow : 0 0 .123em #aaa;
+}
+
 
 .button-container {
   margin-bottom : 1em;
@@ -55,8 +101,6 @@ button {
   text-align : center;
 
   flex-direction : column;
-
-  height : 100%;
 }
 
 .card {
@@ -69,6 +113,23 @@ button {
 
 pre {
   overflow : scroll;
+}
+
+script.is-active {
+  display : block;
+
+  text-align : left;
+  white-space : pre;
+
+  overflow : scroll;
+
+  background : #eee;
+
+  font-family : monospace;
+
+  padding : 1em;
+
+  margin-bottom : 1em;
 }
 
 [class^="modal"] .container {
