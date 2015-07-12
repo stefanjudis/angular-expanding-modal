@@ -1,181 +1,147 @@
 <!doctype html>
+
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Anuglar-expanding-modal</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Material Design Lite</title>
 
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
-        <style>
-          *, *::before, *::after {
-            box-sizing : border-box;
-          }
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
 
-          body {
-            background : grey;
-          }
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
 
-          button {
-            background : white;
-            color : red;
+    <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
+    <link rel="stylesheet" href="main.min.css">
+  </head>
+  <body ng-app="myApp">
 
-            border : none;
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="angular-expanding-modal-es5.js"></script>
+    <script>
+        var myApp = angular.module('myApp',[ 'sj.expandingModal' ] );
 
-            padding : 1em;
-            margin : .5em;
+        myApp.controller('DoubleController', ['$scope', 'ExpandingModal', function($scope, ExpandingModal ) {
+          $scope.openModalInContainer = function( event, position, content ) {
+            var className = 'modal';
 
-            width : 12em;
-          }
+            if ( position ) {
+              className += '__' + position;
+            }
 
-          [class^="modal"] {
-            position : absolute;
+            var modal = ExpandingModal.create({
+              template     :  '<div class="' + className + ' card">' +
+                '<div class="container">' +
+                  '<div>' +
+                    '<h2 >Appended to container</h2>' +
+                  '</div>' +
+                  '<div>' +
+                    '<button ng-click="modal.close()">' +
+                      'Close' +
+                    '</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>',
+              container    : event.target.parentNode,
+              controller   : function ( $scope ) {
+                this.close = modal.close;
+              },
+              controllerAs : 'modal'
+            });
 
-            width  : 25%;
+            modal.open( event.target );
+          };
 
-            padding : 1em 1em 4em;
+          $scope.openModal = function( event, position, content ) {
+            var className = 'modal';
 
-            background : white;
-            z-index : 1;
-          }
+            if ( position ) {
+              className += '__' + position;
+            }
 
-          [class^="modal"] button {
-            position : absolute;
+            var modal = ExpandingModal.create({
+              template     :  '<div class="' + className + ' card">' +
+                '<div class="container">' +
+                  '<div>' +
+                    '<h2 >Appended to body</h2>' +
+                  '</div>' +
+                  '<div>' +
+                    '<button ng-click="modal.close()">' +
+                      'Close' +
+                    '</button>' +
+                  '</div>' +
+                '</div>' +
+              '</div>',
+              controller   : [ '$scope', function ( $scope ) {
+                this.close = modal.close;
+                this.content = content;
+                $scope.foo = 'fooao';
+              } ],
+              controllerAs : 'modal'
+            });
 
-            bottom : 1em;
-            width : calc( 100% - 3em );
-            left : 1em;
-
-            display : block;
-            background : red;
-            color : white;
-
-            border : none;
-          }
-
-          [class^="modal"] .container {
-            opacity : 0;
-
-            transition : opacity .2s ease-in;
-          }
-
-          [class^="modal"].done  .container {
-            opacity : 1;
-
-            transition : opacity .2s ease-in .1s;
-          }
-
-          .modal__upperLeft {
-            top : 5%;
-            left : 5%;
-
-          }
-
-          .modal__upperCenter {
-            top : 5%;
-            left : 50%;
-
-            transform : translate3d( -50%, 0, 0 );
-          }
-
-          .modal__upperRight {
-            right : 5%;
-            top : 5%;
-          }
-
-          .modal__middleLeft {
-            top : 50%;
-            left : 5%;
-
-            transform : translate3d( 0, -50%, 0 );
-          }
-
-          .modal__middleCenter {
-            top : 50%;
-            left : 50%;
-
-            transform : translate3d( -50%, -50%, 0 );
-          }
-
-          .modal__middleRight {
-            right : 5%;
-            top : 50%;
-
-            transform : translate3d( 0, -50%, 0 );
-          }
-
-          .modal__bottomLeft {
-            left : 5%;
-            bottom : 5%;
-          }
-
-          .modal__bottomCenter {
-            left : 50%;
-            bottom : 5%;
-
-            transform : translate3d( -50%, 0, 0 );
-          }
-
-          .modal__bottomRight {
-            right : 5%;
-            bottom : 5%;
-          }
-
-
-          .transitionOut {
-            transition : opacity .3s ease-in, transform .3s ease-in;
-          }
-          .transitionIn {
-            transition : opacity .3s ease-out, transform .3s ease-out;
-          }
-        </style>
-    </head>
-    <body ng-app="myApp">
-        <p>Hello world! This is angular-expanding-modal.</p>
-        <script src="node_modules/angular/angular.js"></script>
-        <script src="angular-expanding-modal-es5.js"></script>
-        <script>
-            var myApp = angular.module('myApp',[ 'sj.expandingModal' ] );
-
-            myApp.controller('DoubleController', ['$scope', 'ExpandingModal', function($scope, ExpandingModal ) {
-              $scope.openModal = function( event, position, content ) {
-                var className = 'modal';
-
-                if ( position ) {
-                  className += '__' + position;
-                }
-
-                var modal = ExpandingModal({
-                  template     : '<div class="' + className + '"><div class="container">' + content + '<button ng-click="modal.close()">close me</button></div></div>',
-                  controller   : function () {
-                    this.close = modal.deactivate;
-                  },
-                  controllerAs : 'modal'
-                });
-
-                modal.activate( event.target, {} );
-              };
-            }]);
-        </script>
-    </body>
-
-    <div ng-controller="DoubleController" style="position : absolute; top : 50%; left : 50%; transform : translate( -50%, -50% ); text-align : center; width : 450px;">
-      <div>
-        <button ng-click="openModal( $event, 'upperLeft', 'This is upper left.' )">open upper left</button>
-        <button ng-click="openModal( $event, 'upperCenter', 'This is upper center.' )">open upper center</button>
-        <button ng-click="openModal( $event, 'upperRight', 'This is upper right.' )">open upper right</button>
-      </div>
-      <div>
-        <button ng-click="openModal( $event, 'middleLeft', 'This is middle left.' )">open middle left</button>
-        <button ng-click="openModal( $event, 'middleCenter', 'This is middle center.' )">open middle center</button>
-        <button ng-click="openModal( $event, 'middleRight', 'This is middle right' )">open middle right</button>
-      </div>
-      <div>
-        <button ng-click="openModal( $event, 'bottomLeft', 'This is bottom left' )">open bottom left</button>
-        <button ng-click="openModal( $event, 'bottomCenter', 'This is bottom center' )">open bottom center</button>
-        <button ng-click="openModal( $event, 'bottomRight', 'This is bottom right' )">open bottom right</button>
-      </div>
-    </div>
+            modal.open( event.target );
+          };
+        } ] );
+    </script>
+    <main class="flex-container">
+      <section class="presentation-container" ng-controller="DoubleController">
+        <div>
+          <svg width="169px" height="125px" viewBox="0 0 169 125">
+              <desc>Logo of Angular Expanding Modals</desc>
+              <defs></defs>
+              <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                  <rect id="Rectangle-3" stroke="#79D7FF" stroke-width="3" sketch:type="MSShapeGroup" x="48" y="49.8873734" width="73.705814" height="25.9357128" rx="8"></rect>
+                  <rect id="Rectangle-3-Copy-9" stroke="#00BCD4" stroke-width="3" sketch:type="MSShapeGroup" x="11.6990526" y="12" width="82.8048164" height="50.1910861" rx="8"></rect>
+                  <rect id="Rectangle-3-Copy-10" stroke="#00BCD4" stroke-width="3" sketch:type="MSShapeGroup" x="74.496131" y="12" width="82.8048164" height="50.1910861" rx="8"></rect>
+                  <rect id="Rectangle-3-Copy-12" stroke="#00BCD4" stroke-width="3" sketch:type="MSShapeGroup" x="11.6990526" y="61.821331" width="82.8048164" height="50.1910861" rx="8"></rect>
+                  <rect id="Rectangle-3-Copy-11" stroke="#00BCD4" stroke-width="3" sketch:type="MSShapeGroup" x="74.496131" y="61.821331" width="82.8048164" height="50.1910861" rx="8"></rect>
+              </g>
+          </svg>
+          <h1>Angular Expanding Modal</h1>
+        </div>
+        <h2>Append modals to body</h2>
+        <div class="button-container">
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'upperLeft', 'This is upper left.' )">open upper left</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'upperCenter', 'This is upper center.' )">open upper center</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'upperRight', 'This is upper right.' )">open upper right</button>
+          </div>
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'middleLeft', 'This is middle left.' )">open middle left</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'middleCenter', 'This is middle center.' )">open middle center</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'middleRight', 'This is middle right' )">open middle right</button>
+          </div>
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'bottomLeft', 'This is bottom left' )">open bottom left</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'bottomCenter', 'This is bottom center' )">open bottom center</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'bottomRight', 'This is bottom right' )">open bottom right</button>
+          </div>
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModal( $event, 'fullScreen', 'This is bottom right' )">open fullscreen</button>
+          </div>
+        </div>
+        <h2>Append modals to container</h2>
+        <div class="button-container">
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerTop', 'This is bottom right' )">open top</button>
+          </div>
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerFull', 'This is bottom right' )">open in full</button>
+          </div>
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" ng-click="openModalInContainer( $event, 'inContainerBottom', 'This is bottom right' )">open bottom</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
