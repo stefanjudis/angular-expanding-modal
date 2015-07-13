@@ -1,4 +1,4 @@
-/* global angular */
+/* global window, requestAnimationFrame */
 
 /*
  * @license
@@ -8,10 +8,10 @@
 
 'use strict';
 
-;(function (window, ng) {
+(function (window, ng) {
   'use strict';
 
-  function ExpandingModal($compile, $rootScope, $controller, $q, $http, $templateCache) {
+  function ExpandingModal($compile, $rootScope, $document, $controller, $q, $http, $templateCache) {
     return {
       /**
        * Factory function to create new modal instance
@@ -24,8 +24,7 @@
           throw new Error('Expected modal to have exacly one of either `template` or `templateUrl`');
         }
 
-        var template = config.template;
-        var container = ng.element(config.container || document.body);
+        var container = ng.element(config.container || $document[0].body);
         var controller = config.controller || null;
         var controllerAs = config.controllerAs;
         var element = null;
@@ -270,7 +269,7 @@
     };
   }
 
-  ng.module('sj.expandingModal', []).factory('ExpandingModal', ['$compile', '$rootScope', '$controller', '$q', '$http', '$templateCache', ExpandingModal]);
+  ng.module('sj.expandingModal', []).factory('ExpandingModal', ['$compile', '$rootScope', '$document', '$controller', '$q', '$http', '$templateCache', ExpandingModal]);
 })(window, window.angular);
 
 //# sourceMappingURL=angular-expanding-modal-es5.js.map

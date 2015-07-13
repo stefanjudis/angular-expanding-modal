@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "karma start karma.conf.js --browsers Firefox --single-run",
+    "test": "npm run lint && npm run test:karma",
+    "test:karma": "karma start karma.conf.js --browsers Firefox --single-run",
     "css": "postcss main.css -u autoprefixer -u cssnano -o main.min.css",
+    "lint": "eslint ./angular-expanding-modal.js",
     "js": "npm run js:babel && npm run js:uglify",
     "js:babel": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps",
     "js:uglify": "uglifyjs angular-expanding-modal-es5.js -o angular-expanding-modal.min.js",
     "dev": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps --watch",
     "sync": "browser-sync start --files 'angular-expanding-modal-es5.js,index.html' --server",
-    "build": "npm run js"
+    "build": "npm run js && npm run css"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
     "babel": "^5.6.14",
     "browser-sync": "^2.7.13",
     "cssnano": "^2.0.3",
+    "eslint": "^0.24.1",
     "jasmine-core": "^2.3.4",
     "karma": "^0.12.37",
     "karma-chrome-launcher": "^0.2.0",

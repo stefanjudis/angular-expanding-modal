@@ -1,4 +1,4 @@
-/* global angular */
+/* global window, requestAnimationFrame */
 
 /*
  * @license
@@ -6,10 +6,10 @@
  * License: MIT
  */
 
-;( function( window, ng ) {
+( function( window, ng ) {
   'use strict';
 
-  function ExpandingModal( $compile, $rootScope, $controller, $q, $http, $templateCache ) {
+  function ExpandingModal( $compile, $rootScope, $document, $controller, $q, $http, $templateCache ) {
     return {
       /**
        * Factory function to create new modal instance
@@ -19,11 +19,12 @@
        */
       create : config => {
         if ( ! ( ! config.template ^ ! config.templateUrl ) ) {
-          throw new Error('Expected modal to have exacly one of either `template` or `templateUrl`');
+          throw new Error(
+            'Expected modal to have exacly one of either `template` or `templateUrl`'
+          );
         }
 
-        let template      = config.template;
-        let container     = ng.element( config.container || document.body );
+        let container     = ng.element( config.container || $document[ 0 ].body );
         let controller    = config.controller || null;
         let controllerAs  = config.controllerAs;
         let element       = null;
@@ -83,7 +84,9 @@
           element = ng.element( html );
 
           if ( element.length === 0 ) {
-            throw new Error('The template contains no elements; you need to wrap text nodes');
+            throw new Error(
+              'The template contains no elements; you need to wrap text nodes'
+            );
           }
           scope = $rootScope.$new();
 
@@ -131,16 +134,16 @@
             y : 0
           };
 
-          let computedStyle   = window.getComputedStyle( element[ 0 ], null )
+          let computedStyle   = window.getComputedStyle( element[ 0 ], null );
           let transformStyles = computedStyle.getPropertyValue( 'transform' ) ||
                                 window.getComputedStyle( element[ 0 ], null ).getPropertyValue( '-webkit-transform' );
 
 
           if ( transformStyles && transformStyles !== 'none' ) {
-            let transformValues = transformStyles.replace( /(matrix\(|\))/g, '' ).split( ',' )
+            let transformValues = transformStyles.replace( /(matrix\(|\))/g, '' ).split( ',' );
 
-            transformDiff.x = +transformValues[ 4 ];
-            transformDiff.y = +transformValues[ 5 ];
+            transformDiff.x = + transformValues[ 4 ];
+            transformDiff.y = + transformValues[ 5 ];
           }
 
           let scaleX = startValues.width / endValues.width;
@@ -155,8 +158,8 @@
           var listenerFunc = function listener() {
             element[ 0 ].classList.remove( 'transitionOut' );
             element[ 0 ].classList.add( 'done' );
-            _setPrefixedProperty( element[ 0 ], 'transform', '' )
-            _setPrefixedProperty( element[ 0 ], 'transformOrigin', '' )
+            _setPrefixedProperty( element[ 0 ], 'transform', '' );
+            _setPrefixedProperty( element[ 0 ], 'transformOrigin', '' );
             element[ 0 ].style.opacity   = '';
 
 
@@ -175,8 +178,8 @@
 
             element[ 0 ].classList.add( 'transitionOut' );
 
-            _setPrefixedProperty( element[ 0 ], 'transform', '' )
-            _setPrefixedProperty( element[ 0 ], 'transformOrigin', '.5 .5' )
+            _setPrefixedProperty( element[ 0 ], 'transform', '' );
+            _setPrefixedProperty( element[ 0 ], 'transformOrigin', '.5 .5' );
             element[ 0 ].style.opacity   = 1;
           } );
         }
@@ -229,15 +232,15 @@
             y : 0
           };
 
-          let computedStyle   = window.getComputedStyle( element[ 0 ], null )
+          let computedStyle   = window.getComputedStyle( element[ 0 ], null );
           let transformStyles = computedStyle.getPropertyValue( 'transform' ) ||
                                 computedStyle.getPropertyValue( '-webkit-transform' );
 
           if ( transformStyles && transformStyles !== 'none' ) {
-            let transformValues = transformStyles.replace( /(matrix\(|\))/g, '' ).split( ',' )
+            let transformValues = transformStyles.replace( /(matrix\(|\))/g, '' ).split( ',' );
 
-            transformDiff.x = +transformValues[ 4 ];
-            transformDiff.y = +transformValues[ 5 ];
+            transformDiff.x = + transformValues[ 4 ];
+            transformDiff.y = + transformValues[ 5 ];
           }
 
           let transformRule = 'translate3d(' +
@@ -284,9 +287,9 @@
           close : close
         };
       }
-    }
+    };
   }
 
   ng.module( 'sj.expandingModal', [] )
-      .factory( 'ExpandingModal', [ '$compile', '$rootScope', '$controller', '$q', '$http', '$templateCache', ExpandingModal ] );
+      .factory( 'ExpandingModal', [ '$compile', '$rootScope', '$document', '$controller', '$q', '$http', '$templateCache', ExpandingModal ] );
 } )( window, window.angular );
