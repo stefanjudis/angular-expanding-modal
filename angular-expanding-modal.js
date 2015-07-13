@@ -11,6 +11,12 @@
 
   function ExpandingModal( $compile, $rootScope, $controller, $q, $http, $templateCache ) {
     return {
+      /**
+       * Factory function to create new modal instance
+       *
+       * @param  {Object} config config
+       * @return {Object}        modal
+       */
       create : config => {
         if ( ! ( ! config.template ^ ! config.templateUrl ) ) {
           throw new Error('Expected modal to have exacly one of either `template` or `templateUrl`');
@@ -21,25 +27,56 @@
         let controller    = config.controller || null;
         let controllerAs  = config.controllerAs;
         let element       = null;
-        let html
+        let html          = _getHtmlString( config );
         let target;
         let scope;
 
-        if ( config.template ) {
-          html = $q.when( config.template );
-        } else {
-          html = $http.get( config.templateUrl, {
-            cache : $templateCache
-          } ).then( function ( response ) {
-            return response.data;
-          } );
+
+        /**
+         * Evlaluate config and check if html-string
+         * is included and if not fetch html string
+         * via $http
+         *
+         * @param  {Object}         config config
+         * @return {String|Promise}        promise resolving with
+         *                                 html string
+         */
+        function _getHtmlString( config ) {
+          if ( config.template ) {
+            html = $q.when( config.template );
+          } else {
+            html = $http.get( config.templateUrl, {
+              cache : $templateCache
+            } ).then( function ( response ) {
+              return response.data;
+            } );
+          }
+
+          return html;
         }
 
+
+        /**
+         * Helper function to set property with
+         * vendor prefixes to elemnets
+         *
+         * @param {Object} element DOM element
+         * @param {Sring}  prop    property name
+         * @param {String} value   property value
+         */
         function _setPrefixedProperty( element, prop, value ) {
           element.style[ prop ] = value;
           element.style[ '-webkit-' + prop ] = value;
         }
 
+
+        /**
+         * Attach the modal to the DOM
+         *
+         * @param  {String} html       html
+         * @param  {Object} targetElem target element
+         * @param  {Object} locals     locals
+         */
         function attach( html, targetElem, locals = {} ) {
           target = targetElem;
 
@@ -144,6 +181,13 @@
           } );
         }
 
+
+        /**
+         * Open the modal
+         *
+         * @param  {Object} target target element
+         * @param  {Object} locals locals
+         */
         function open( target, locals ) {
           return html.then( html => {
             if ( ! element ) {
@@ -153,6 +197,9 @@
         }
 
 
+        /**
+         * Close the modals and remove it from the DOM
+         */
         function close() {
           if ( ! element ) {
             return $q.when();
