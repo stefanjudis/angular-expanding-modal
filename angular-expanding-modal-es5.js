@@ -156,20 +156,22 @@
             element[0].removeEventListener('transitionend', listenerFunc);
           };
 
-          _setPrefixedProperty(element[0], 'transform', transformRule);
-          _setPrefixedProperty(element[0], 'transformOrigin', '0 0');
-
-          element[0].style.opacity = 0.25;
-
           requestAnimationFrame(function () {
+            _setPrefixedProperty(element[0], 'transform', transformRule);
+            _setPrefixedProperty(element[0], 'transformOrigin', '0 0');
 
-            element[0].addEventListener('transitionend', listenerFunc, false);
+            element[0].style.opacity = 0.25;
 
-            element[0].classList.add('transitionOut');
+            requestAnimationFrame(function () {
 
-            _setPrefixedProperty(element[0], 'transform', '');
-            _setPrefixedProperty(element[0], 'transformOrigin', '.5 .5');
-            element[0].style.opacity = 1;
+              element[0].addEventListener('transitionend', listenerFunc, false);
+
+              element[0].classList.add('transitionOut');
+
+              _setPrefixedProperty(element[0], 'transform', '');
+              _setPrefixedProperty(element[0], 'transformOrigin', '.5 .5');
+              element[0].style.opacity = 1;
+            });
           });
         }
 
