@@ -34,7 +34,8 @@
           var sections = {
             bodyCode      : { active : false },
             containerCode : { active : false },
-            partialCode   : { active : false }
+            partialCode   : { active : false },
+            promiseCode   : { active : false }
           }
 
           this.toggleActive = function( sectionName ) {
@@ -148,7 +149,7 @@
       }
 
       var modal = ExpandingModal.create( {
-        template     :  '<div class="' + className + ' card">' +
+        template     : '<div class="' + className + ' card">' +
           '<div class="container">' +
             '<div>' +
               '<h2 >Appended to Container</h2>' +
@@ -197,6 +198,51 @@
       });
 
       modal.open( event.target );
+    };
+  } ] );
+} )( window );
+          </script>
+        </div>
+        <h2>Execute JavaScript after opening/closing</h2>
+        <div ng-controller="PromiseController as PromiseController">
+          <div class="button-container">
+            <div>
+              <button class="button" ng-click="PromiseController.openModal( $event, 'This is showing an alert' )">open with alert</button>
+            </div>
+            <button class="button__grey" type="button" ng-click="AppController.toggleActive( 'promiseCode' )">Toggle Code</button>
+          </div>
+          <script ng-class="{ 'is-active' : AppController.isActive( 'promiseCode' ) }">
+( function( window ) {
+  window.app.controller( 'PromiseController', [ 'ExpandingModal', function( ExpandingModal ) {
+    this.openModal = function( event, content ) {
+      var modal = ExpandingModal.create({
+        template     : '<div class="modal__middleCenter card">' +
+          '<div class="container">' +
+            '<div>' +
+              '<h2 >Appended to Container</h2>' +
+            '</div>' +
+            '<p>{{ modal.content }}</p>' +
+            '<div>' +
+              '<button class="button" ng-click="modal.close()">' +
+                'Close' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>',
+        controller   : function () {
+          this.close     = function() {
+            modal.close.apply( null, arguments ).then( function() {
+              alert( 'Closed Angular Expanding Modal' );
+            } );
+          }
+          this.content   = content;
+        },
+        controllerAs : 'modal'
+      });
+
+      modal.open( event.target ).then( function() {
+        alert( 'Opened Angular Expanding Modal' );
+      } );
     };
   } ] );
 } )( window );
