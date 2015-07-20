@@ -48,9 +48,7 @@
           } else {
             html = $http.get( config.templateUrl, {
               cache : $templateCache
-            } ).then( function ( response ) {
-              return response.data;
-            } );
+            } ).then( ( { data } ) => data );
           }
 
           return html;
@@ -79,6 +77,8 @@
          * @param  {Object} locals     locals
          */
         function attach( html, targetElem, locals = {} ) {
+          let defer = $q.defer();
+
           target = targetElem;
 
           element = ng.element( html );
@@ -164,6 +164,8 @@
 
 
             element[ 0 ].removeEventListener( 'transitionend', listenerFunc );
+
+            defer.resolve();
           };
 
 
@@ -184,6 +186,8 @@
               element[ 0 ].style.opacity   = 1;
             } );
           } );
+
+          return defer.promise;
         }
 
 
@@ -194,11 +198,15 @@
          * @param  {Object} locals locals
          */
         function open( target, locals ) {
-          return html.then( html => {
+          let defer = $q.defer();
+
+          html.then( html => {
             if ( ! element ) {
-              attach( html, target, locals );
+              attach( html, target, locals ).then( defer.resolve );
             }
           } );
+
+          return defer.promise;
         }
 
 
@@ -209,6 +217,8 @@
           if ( ! element ) {
             return $q.when();
           }
+
+          let defer = $q.defer();
 
           let startRect = element[ 0 ].getBoundingClientRect();
           let endRect   = target.getBoundingClientRect();
@@ -258,7 +268,7 @@
           let listenerFunc = function listener() {
             element[ 0 ].classList.remove( 'transitionIn' );
             element[ 0 ].classList.add( 'done' );
-            element[ 0 ].style.opacity   = 0;
+            element[ 0 ].style.opacity = 0;
 
             element[ 0 ].removeEventListener( 'transitionend', listenerFunc, false );
 
@@ -269,6 +279,8 @@
             element.remove();
             element = null;
             target  = null;
+
+            defer.resolve();
           };
 
           requestAnimationFrame( () => {
@@ -282,6 +294,8 @@
 
             element[ 0 ].addEventListener( 'transitionend', listenerFunc, false );
           } );
+
+          return defer.promise;
         }
 
         return {
