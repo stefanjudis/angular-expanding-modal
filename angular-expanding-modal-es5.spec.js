@@ -170,112 +170,58 @@ describe( 'btfModal', function() {
     } );
 
 
-  //   describe('#deactivate', function () {
-  //     it('should remove a modal when deactivated', function() {
+    describe( 'ExpandingModal.create().close', function () {
+      it( 'should remove a modal when deactivated', function() {
+        var modal = ExpandingModal.create( {
+          template  : '<span>{{greeting}}</span>',
+          container : container
+        } );
 
-  //       var modal = btfModal({
-  //         template: '<span>{{greeting}}</span>',
-  //         container: container
-  //       } );
+        modal.open( target[ 0 ], {
+          greeting: 'bon soir'
+        } );
+        $rootScope.$digest();
 
-  //       modal.activate();
-  //       $rootScope.$digest();
+        modal.close().then( function() {
+          expect( container.text() ).toBe( '' );
+        } );
 
-  //       modal.deactivate();
-  //       $rootScope.$digest();
+      } );
 
-  //       expect(container.text()).toBe('');
-  //     } );
+      it( 'should destroy the scope when deactivated', inject( function( $browser ) {
+        var destroySpy = jasmine.createSpy( 'onDestroy' );
 
-  //     it('should destroy the scope when deactivated', inject(function($browser) {
-  //       var destroySpy = jasmine.createSpy('onDestroy');
+        var modal = ExpandingModal.create( {
+          template   : '<span>{{greeting}}</span>',
+          container  : container,
+          controller : function( $scope ) {
+            $scope.$on( '$destroy', destroySpy );
+          }
+        } );
 
-  //       var modal = btfModal({
-  //         template: '<span>{{greeting}}</span>',
-  //         container: container,
-  //         controller: function ($scope) {
-  //           $scope.$on('$destroy', destroySpy);
-  //         }
-  //       } );
+        modal.open().then( function() {
+          modal.close().then( destroySpy );
+          $browser.defer.flush();
 
-  //       modal.activate();
-  //       modal.deactivate().then(destroySpy);
-  //       $browser.defer.flush();
+          expect( destroySpy ).toHaveBeenCalled();
+        } );
+      } ) );
 
-  //       expect(destroySpy).toHaveBeenCalled();
-  //     }));
+      it('should resolve a promise after deactivating', inject(function($browser) {
+        var spy = jasmine.createSpy( 'closed' );
 
-  //     it('should resolve a promise after deactivating', inject(function($browser) {
-  //       var spy = jasmine.createSpy('deactivated');
+        var modal = ExpandingModal.create({
+          template  : '<span>x</span>',
+          container : container
+        } );
 
-  //       var modal = btfModal({
-  //         template: '<span>x</span>',
-  //         container: container
-  //       } );
+        modal.open().then( function() {
+          modal.close().then( spy );
+          $browser.defer.flush();
 
-  //       modal.activate();
-  //       modal.deactivate().then(spy);
-  //       $browser.defer.flush();
-
-  //       expect(spy).toHaveBeenCalled();
-  //     }));
-
-  //   } );
-
-
-  //   describe('#active', function () {
-  //     it('should return the state of the modal', inject(function($browser) {
-
-  //       var modal = btfModal({
-  //         template: '<span>{{greeting}}</span>',
-  //         container: container
-  //       } );
-
-  //       $rootScope.$digest();
-  //       expect(modal.active()).toBe(false);
-
-  //       modal.activate();
-  //       $browser.defer.flush();
-  //       expect(modal.active()).toBe(true);
-  //     }));
-  //   } );
-  // } );
-
-
-  // describe('with animations', function () {
-  //   var $animate,
-  //       modal;
-
-  //   beforeEach(module('ngAnimateMock'));
-
-  //   beforeEach(inject(function(btfModal, _$rootScope_, _$animate_) {
-  //     $rootScope = _$rootScope_;
-  //     $animate = _$animate_;
-
-  //     modal = btfModal({
-  //       template: '<span>animations!</span>',
-  //       container: container
-  //     } );
-  //   }));
-
-  //   it('should trigger an enter animation when activated', function () {
-  //     modal.activate();
-  //     $rootScope.$digest();
-
-  //     var item = $animate.queue.shift();
-  //     expect(item.event).toBe('enter');
-  //   } );
-
-  //   it('should trigger a leave animation when deactivated', function () {
-  //     modal.activate();
-  //     $rootScope.$digest();
-  //     $animate.queue.shift();
-
-  //     modal.deactivate();
-  //     $rootScope.$digest();
-
-  //     var item = $animate.queue.shift();
-  //     expect(item.event).toBe('leave');
-    // } );
+          expect( spy ).toHaveBeenCalled();
+        } );
+      } ) );
+    } );
   } );
 } );

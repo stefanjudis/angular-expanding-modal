@@ -47,8 +47,9 @@
           } else {
             html = $http.get(config.templateUrl, {
               cache: $templateCache
-            }).then(function (response) {
-              return response.data;
+            }).then(function (_ref) {
+              var data = _ref.data;
+              return data;
             });
           }
 
@@ -77,6 +78,8 @@
          */
         function attach(html, targetElem) {
           var locals = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+          var defer = $q.defer();
 
           target = targetElem;
 
@@ -154,6 +157,8 @@
             element[0].style.opacity = '';
 
             element[0].removeEventListener('transitionend', listenerFunc);
+
+            defer.resolve();
           };
 
           requestAnimationFrame(function () {
@@ -173,6 +178,8 @@
               element[0].style.opacity = 1;
             });
           });
+
+          return defer.promise;
         }
 
         /**
@@ -182,11 +189,15 @@
          * @param  {Object} locals locals
          */
         function open(target, locals) {
-          return html.then(function (html) {
+          var defer = $q.defer();
+
+          html.then(function (html) {
             if (!element) {
-              attach(html, target, locals);
+              attach(html, target, locals).then(defer.resolve);
             }
           });
+
+          return defer.promise;
         }
 
         /**
@@ -196,6 +207,8 @@
           if (!element) {
             return $q.when();
           }
+
+          var defer = $q.defer();
 
           var startRect = element[0].getBoundingClientRect();
           var endRect = target.getBoundingClientRect();
@@ -248,6 +261,8 @@
             element.remove();
             element = null;
             target = null;
+
+            defer.resolve();
           };
 
           requestAnimationFrame(function () {
@@ -261,6 +276,8 @@
 
             element[0].addEventListener('transitionend', listenerFunc, false);
           });
+
+          return defer.promise;
         }
 
         return {
