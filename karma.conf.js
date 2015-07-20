@@ -11,17 +11,12 @@ module.exports = function( config ) {
 
     autoWatch  : true,
     frameworks : [ 'jasmine' ],
-    browsers   : [ 'Chrome' ],
+    browsers   : [ 'Chrome', 'Firefox', 'Safari' ],
 
     plugins : [
-      'karma-junit-reporter',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
+      'karma-safari-launcher',
       'karma-jasmine'
-    ],
-
-    junitReporter : {
-      outputFile : 'test_out/unit.xml',
-      suite      : 'unit'
-    }
+    ]
 } ) };
