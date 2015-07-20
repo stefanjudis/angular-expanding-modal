@@ -10,8 +10,9 @@
     "lint": "eslint ./angular-expanding-modal.js",
     "js": "npm run js:babel && npm run js:uglify",
     "js:babel": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps",
+    "js:babel-watch": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps --watch",
     "js:uglify": "uglifyjs angular-expanding-modal-es5.js -o angular-expanding-modal.min.js",
-    "dev": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps --watch",
+    "dev": "npm-run-all --parallel js:babel-watch sync",
     "sync": "browser-sync start --files 'angular-expanding-modal-es5.js,index.html' --server",
     "build": "npm run js && npm run css"
   },
@@ -38,6 +39,7 @@
     "karma-chrome-launcher": "^0.2.0",
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.6",
+    "npm-run-all": "^1.2.6",
     "postcss-cli": "^1.3.1",
     "uglify-js": "^2.4.23"
   }
