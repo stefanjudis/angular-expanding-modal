@@ -28,7 +28,7 @@
     <script src="angular-expanding-modal-es5.js"></script>
     <script>
       ( function( ng, window ) {
-        window.app = angular.module('app',[ 'sj.expandingModal' ] );
+        window.app = angular.module('app', [ 'sj.expandingModal' ] );
 
         app.controller( 'AppController', function() {
           var sections = {
@@ -100,7 +100,7 @@
         className += '__' + position;
       }
 
-      var modal = ExpandingModal.create({
+      var modal = new ExpandingModal({
         template     :  '<div class="' + className + ' card">' +
           '<div class="container">' +
             '<div>' +
@@ -148,7 +148,7 @@
         className += '__' + position;
       }
 
-      var modal = ExpandingModal.create( {
+      var modal = new ExpandingModal( {
         template     : '<div class="' + className + ' card">' +
           '<div class="container">' +
             '<div>' +
@@ -188,7 +188,7 @@
 ( function( window ) {
   window.app.controller( 'PartialController', [ 'ExpandingModal', function( ExpandingModal ) {
     this.openModal = function( event, content ) {
-      var modal = ExpandingModal.create({
+      var modal = new ExpandingModal({
         templateUrl  : 'partial.html',
         controller   : function () {
           this.close     = modal.close;
@@ -215,7 +215,7 @@
 ( function( window ) {
   window.app.controller( 'PromiseController', [ 'ExpandingModal', function( ExpandingModal ) {
     this.openModal = function( event, content ) {
-      var modal = ExpandingModal.create({
+      var modal = new ExpandingModal({
         template     : '<div class="modal__middleCenter card">' +
           '<div class="container">' +
             '<div>' +

@@ -22,20 +22,25 @@
         config.container = ng.element( config.container || $document[ 0 ].body );
 
         this._config = config;
+
+        this.close = () => {
+          if ( ! this._element ) {
+            return $q.when();
+          }
+
+          return Modal.detach( this._target, this._element )
+            .then( () => Modal.cleanup( this ) );
+        };
       }
 
       open( target, locals ) {
-        return $q.when( Modal.html( this.config ) )
+
+        return $q.when( Modal.html( this._config ) )
           .then( ( html ) => Modal.attach( this, html, target, locals ) );
       }
 
       close () {
-        if ( ! this._element ) {
-          return $q.when();
-        }
-
-        return Modal.detach( this._target, this._element )
-          .then( () => Modal.cleanup( this ) );
+        console.log( 'nothing to close!' );
       }
 
 
@@ -48,7 +53,7 @@
        * @return {Promise}        promise resolving with
        *                                 html string
        */
-      static html( { template, templateUrl } ) {
+      static html( { template, templateUrl } = {} ) {
         if ( template ) {
           return template;
         }
@@ -61,17 +66,18 @@
 
       static attach( modal, html, target, locals ) {
         if ( modal._element ) {
-          return modal._element;
+          return $q.when( modal._element );
         }
 
         modal._target = target;
 
-        modal._element = Modal.createElement( html )
+        return Modal.element( html )
           .then( ( element ) => Modal.compile( modal, element, locals ) )
-          .then( ( element ) => Modal.append( target, element ) );
+          .then( ( element ) => Modal.append( modal, target, element ) )
+          .then( ( element ) => modal._element = element );
       }
 
-      static createElement( html ) {
+      static element( html ) {
         const element = ng.element( html );
 
         if ( element.length === 0 ) {
@@ -80,7 +86,7 @@
           );
         }
 
-        return element;
+        return $q.when( element );
       }
 
       static compile( modal, element, locals = {} ) {
@@ -103,80 +109,89 @@
 
         modal._scope = scope;
 
+        console.log( scope );
+
         return $compile( element )( scope );
       }
 
-      static append( target, [ element ] ) {
+      static append( modal, target, element ) {
         const deferred = $q.defer();
 
-        const startRect = target.getBoundingClientRect();
-        const endRect   = element.getBoundingClientRect();
+        element[ 0 ].style.opacity = 0;
+
+        modal._config.container.append( element[ 0 ] );
+
+        const startRect = Modal.getBoundingClientRect( target );
+        const endRect   = Modal.getBoundingClientRect( element[ 0 ] );
 
         startRect.top += window.scrollY;
         endRect.top   += window.scrollY;
 
-        const transformRule = Modal.getTransformRule( element, startRect, endRect );
+        const transformRule = Modal.getTransformRule( element[ 0 ], startRect, endRect );
 
-        const listenerFunc = function () {
-          element.classList.remove( 'transitionOut' );
-          element.classList.add( 'done' );
-          Modal.setPrefixedProperty( element, 'transform', '' );
-          Modal.setPrefixedProperty( element, 'transformOrigin', '' );
-          element.style.opacity   = '';
+        const listenerFunc = () => {
+          element[ 0 ].removeEventListener( 'transitionend', listenerFunc );
 
-          element.removeEventListener( 'transitionend', listenerFunc );
+          element[ 0 ].classList.remove( 'transitionOut' );
+          element[ 0 ].classList.add( 'done' );
 
-          deferred.resolve( arguments[ 1 ] );
-        };
+          element[ 0 ].style.opacity   = '';
+          Modal.setPrefixedProperty( element[ 0 ], 'transform', '' );
+          Modal.setPrefixedProperty( element[ 0 ], 'transformOrigin', '' );
 
-        requestAnimationFrame( function () {
-          Modal.setPrefixedProperty( element, 'transform', transformRule );
-          Modal.setPrefixedProperty( element, 'transformOrigin', '0 0' );
-
-          element.style.opacity         = 0.25;
-
-          requestAnimationFrame( function () {
-            element.addEventListener( 'transitionend', listenerFunc, false );
-
-            element.classList.add( 'transitionOut' );
-
-            Modal.setPrefixedProperty( element, 'transform', '' );
-            Modal.setPrefixedProperty( element, 'transformOrigin', '.5 .5' );
-            element.style.opacity   = 1;
-          } );
-        } );
-      }
-
-      static detach( target, [ element ] ) {
-        const deferred = $q.defer();
-
-        const startRect = element.getBoundingClientRect();
-        const endRect   = target.getBoundingClientRect();
-
-        const transformRule = Modal.getTransformRule( element, startRect, endRect );
-
-        element.style.opacity = 1;
-
-        const listenerFunc = function listener() {
-          element.classList.remove( 'transitionIn' );
-          element.classList.add( 'done' );
-          element.style.opacity = 0;
-
-          element.removeEventListener( 'transitionend', listenerFunc, false );
-
-          deferred.resolve();
+          deferred.resolve( element );
         };
 
         requestAnimationFrame( () => {
-          element.classList.add( 'transitionIn' );
-          element.classList.remove( 'done' );
+          Modal.setPrefixedProperty( element[ 0 ], 'transform', transformRule );
+          Modal.setPrefixedProperty( element[ 0 ], 'transformOrigin', '0 0' );
 
-          Modal.setPrefixedProperty( element, 'transform', transformRule );
-          Modal.setPrefixedProperty( element, 'transformOrigin', '0 0 ' );
+          element[ 0 ].style.opacity         = 0.25;
 
-          element.style.opacity   = 0;
+          requestAnimationFrame( function () {
+            element[ 0 ].addEventListener( 'transitionend', listenerFunc, false );
 
-          element.addEventListener( 'transitionend', listenerFunc, false );
+            element[ 0 ].classList.add( 'transitionOut' );
+
+            element[ 0 ].style.opacity = 1;
+            Modal.setPrefixedProperty( element[ 0 ], 'transform', '' );
+            Modal.setPrefixedProperty( element[ 0 ], 'transformOrigin', '.5 .5' );
+          } );
+        } );
+
+        return deferred.promise;
+      }
+
+      static detach( target, element ) {
+        const deferred = $q.defer();
+
+        const endRect = Modal.getBoundingClientRect( element[ 0 ] );
+        const startRect   = Modal.getBoundingClientRect( target );
+
+        const transformRule = Modal.getTransformRule( element[ 0 ], startRect, endRect );
+
+        element[ 0 ].style.opacity = 1;
+
+        const listenerFunc = () => {
+          element[ 0 ].removeEventListener( 'transitionend', listenerFunc, false );
+
+          element[ 0 ].classList.remove( 'transitionIn' );
+          element[ 0 ].classList.add( 'done' );
+
+          element[ 0 ].style.opacity = 0;
+
+          deferred.resolve( element );
+        };
+
+        requestAnimationFrame( () => {
+          element[ 0 ].addEventListener( 'transitionend', listenerFunc, false );
+
+          element[ 0 ].classList.add( 'transitionIn' );
+          element[ 0 ].classList.remove( 'done' );
+
+          element[ 0 ].style.opacity = 0;
+          Modal.setPrefixedProperty( element[ 0 ], 'transform', transformRule );
+          Modal.setPrefixedProperty( element[ 0 ], 'transformOrigin', '0 0 ' );
         } );
 
         return deferred.promise;
@@ -192,6 +207,17 @@
         modal._target  = null;
 
         return true;
+      }
+
+      static getBoundingClientRect( element ) {
+        const box = element.getBoundingClientRect();
+
+        return {
+          top    : box.top,
+          left   : box.left,
+          width  : box.width,
+          height : box.height
+        };
       }
 
       static setPrefixedProperty( element, prop, value ) {

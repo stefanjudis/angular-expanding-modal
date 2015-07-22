@@ -13,6 +13,7 @@
     "js:babel-watch": "babel angular-expanding-modal.js --out-file angular-expanding-modal-es5.js --source-maps --watch",
     "js:uglify": "uglifyjs angular-expanding-modal-es5.js -o angular-expanding-modal.min.js",
     "dev": "npm-run-all --parallel js:babel-watch sync",
+    "start": "npm run dev",
     "sync": "browser-sync start --files 'angular-expanding-modal-es5.js,index.html' --server",
     "build": "npm run js && npm run css"
   },

@@ -8,87 +8,124 @@
 
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
 (function (window, ng) {
   'use strict';
 
   function ExpandingModal($compile, $rootScope, $document, $controller, $q, $http, $templateCache) {
-    return {
-      /**
-       * Factory function to create new modal instance
-       *
-       * @param  {Object} config config
-       * @return {Object}        modal
-       */
-      create: function create(config) {
+
+    return (function () {
+      function Modal() {
+        var _this = this;
+
+        var config = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+        _classCallCheck(this, Modal);
+
         if (!(!config.template ^ !config.templateUrl)) {
           throw new Error('Expected modal to have exacly one of either `template` or `templateUrl`');
         }
 
-        var container = ng.element(config.container || $document[0].body);
-        var controller = config.controller || null;
-        var controllerAs = config.controllerAs;
-        var element = null;
-        var html = _getHtmlString(config);
-        var target = undefined;
-        var scope = undefined;
+        config.container = ng.element(config.container || $document[0].body);
+
+        this._config = config;
+
+        this.close = function () {
+          if (!_this._element) {
+            return $q.when();
+          }
+
+          return Modal.detach(_this._target, _this._element).then(function () {
+            return Modal.cleanup(_this);
+          });
+        };
+      }
+
+      _createClass(Modal, [{
+        key: 'open',
+        value: function open(target, locals) {
+          var _this2 = this;
+
+          return $q.when(Modal.html(this._config)).then(function (html) {
+            return Modal.attach(_this2, html, target, locals);
+          });
+        }
+      }, {
+        key: 'close',
+        value: function close() {
+          console.log('nothing to close!');
+        }
+      }], [{
+        key: 'html',
 
         /**
          * Evlaluate config and check if html-string
          * is included and if not fetch html string
          * via $http
          *
-         * @param  {Object}         config config
-         * @return {String|Promise}        promise resolving with
+         * @param  {Object}  config config object
+         * @return {Promise}        promise resolving with
          *                                 html string
          */
-        function _getHtmlString(config) {
-          if (config.template) {
-            html = $q.when(config.template);
-          } else {
-            html = $http.get(config.templateUrl, {
-              cache: $templateCache
-            }).then(function (_ref) {
-              var data = _ref.data;
-              return data;
-            });
+        value: function html() {
+          var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+          var template = _ref.template;
+          var templateUrl = _ref.templateUrl;
+
+          if (template) {
+            return template;
           }
 
-          return html;
+          return $http.get(templateUrl, {
+            cache: $templateCache
+          }).then(function (_ref2) {
+            var data = _ref2.data;
+            return data;
+          });
         }
+      }, {
+        key: 'attach',
+        value: function attach(modal, html, target, locals) {
+          if (modal._element) {
+            return $q.when(modal._element);
+          }
 
-        /**
-         * Helper function to set property with
-         * vendor prefixes to elemnets
-         *
-         * @param {Object} element DOM element
-         * @param {Sring}  prop    property name
-         * @param {String} value   property value
-         */
-        function _setPrefixedProperty(element, prop, value) {
-          element.style[prop] = value;
-          element.style['-webkit-' + prop] = value;
+          modal._target = target;
+
+          return Modal.element(html).then(function (element) {
+            return Modal.compile(modal, element, locals);
+          }).then(function (element) {
+            return Modal.append(modal, target, element);
+          }).then(function (element) {
+            return modal._element = element;
+          });
         }
-
-        /**
-         * Attach the modal to the DOM
-         *
-         * @param  {String} html       html
-         * @param  {Object} targetElem target element
-         * @param  {Object} locals     locals
-         */
-        function attach(html, targetElem) {
-          var locals = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
-          var defer = $q.defer();
-
-          target = targetElem;
-
-          element = ng.element(html);
+      }, {
+        key: 'element',
+        value: function element(html) {
+          var element = ng.element(html);
 
           if (element.length === 0) {
             throw new Error('The template contains no elements; you need to wrap text nodes');
           }
-          scope = $rootScope.$new();
+
+          return $q.when(element);
+        }
+      }, {
+        key: 'compile',
+        value: function compile(modal, element) {
+          var locals = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+          var scope = $rootScope.$new();
+          var _modal$_config = modal._config;
+          var controller = _modal$_config.controller;
+          var controllerAs = _modal$_config.controllerAs;
 
           if (controller) {
             locals.$scope = scope;
@@ -104,188 +141,167 @@
             }
           }
 
-          $compile(element)(scope);
+          modal._scope = scope;
+
+          console.log(scope);
+
+          return $compile(element)(scope);
+        }
+      }, {
+        key: 'append',
+        value: function append(modal, target, element) {
+          var deferred = $q.defer();
 
           element[0].style.opacity = 0;
 
-          container.append(element[0]);
+          modal._config.container.append(element[0]);
 
-          var startRect = target.getBoundingClientRect();
-          var endRect = element[0].getBoundingClientRect();
+          var startRect = Modal.getBoundingClientRect(target);
+          var endRect = Modal.getBoundingClientRect(element[0]);
 
-          var startValues = {
-            top: startRect.top + window.scrollY,
-            left: startRect.left,
+          startRect.top += window.scrollY;
+          endRect.top += window.scrollY;
 
-            height: startRect.height,
-            width: startRect.width
-          };
+          var transformRule = Modal.getTransformRule(element[0], startRect, endRect);
 
-          var endValues = {
-            top: endRect.top + window.scrollY,
-            left: endRect.left,
-
-            height: endRect.height,
-            width: endRect.width
-          };
-
-          var transformDiff = {
-            x: 0,
-            y: 0
-          };
-
-          var computedStyle = window.getComputedStyle(element[0], null);
-          var transformStyles = computedStyle.getPropertyValue('transform') || window.getComputedStyle(element[0], null).getPropertyValue('-webkit-transform');
-
-          if (transformStyles && transformStyles !== 'none') {
-            var transformValues = transformStyles.replace(/(matrix\(|\))/g, '').split(',');
-
-            transformDiff.x = +transformValues[4];
-            transformDiff.y = +transformValues[5];
-          }
-
-          var scaleX = startValues.width / endValues.width;
-          var scaleY = startValues.height / endValues.height;
-
-          var transformRule = 'translate3d(' + (startValues.left - endValues.left + transformDiff.x) + 'px, ' + (startValues.top - endValues.top + transformDiff.y) + 'px,' + '0 ) ' + 'scale(' + scaleX + ',' + scaleY + ')';
-
-          var listenerFunc = function listener() {
-            element[0].classList.remove('transitionOut');
-            element[0].classList.add('done');
-            _setPrefixedProperty(element[0], 'transform', '');
-            _setPrefixedProperty(element[0], 'transformOrigin', '');
-            element[0].style.opacity = '';
-
+          var listenerFunc = function listenerFunc() {
             element[0].removeEventListener('transitionend', listenerFunc);
 
-            defer.resolve();
+            element[0].classList.remove('transitionOut');
+            element[0].classList.add('done');
+
+            element[0].style.opacity = '';
+            Modal.setPrefixedProperty(element[0], 'transform', '');
+            Modal.setPrefixedProperty(element[0], 'transformOrigin', '');
+
+            deferred.resolve(element);
           };
 
           requestAnimationFrame(function () {
-            _setPrefixedProperty(element[0], 'transform', transformRule);
-            _setPrefixedProperty(element[0], 'transformOrigin', '0 0');
+            Modal.setPrefixedProperty(element[0], 'transform', transformRule);
+            Modal.setPrefixedProperty(element[0], 'transformOrigin', '0 0');
 
             element[0].style.opacity = 0.25;
 
             requestAnimationFrame(function () {
-
               element[0].addEventListener('transitionend', listenerFunc, false);
 
               element[0].classList.add('transitionOut');
 
-              _setPrefixedProperty(element[0], 'transform', '');
-              _setPrefixedProperty(element[0], 'transformOrigin', '.5 .5');
               element[0].style.opacity = 1;
+              Modal.setPrefixedProperty(element[0], 'transform', '');
+              Modal.setPrefixedProperty(element[0], 'transformOrigin', '.5 .5');
             });
           });
 
-          return defer.promise;
+          return deferred.promise;
         }
+      }, {
+        key: 'detach',
+        value: function detach(target, element) {
+          var deferred = $q.defer();
 
-        /**
-         * Open the modal
-         *
-         * @param  {Object} target target element
-         * @param  {Object} locals locals
-         */
-        function open(target, locals) {
-          var defer = $q.defer();
+          var endRect = Modal.getBoundingClientRect(element[0]);
+          var startRect = Modal.getBoundingClientRect(target);
 
-          html.then(function (html) {
-            if (!element) {
-              attach(html, target, locals).then(defer.resolve);
-            }
+          var transformRule = Modal.getTransformRule(element[0], startRect, endRect);
+
+          element[0].style.opacity = 1;
+
+          var listenerFunc = function listenerFunc() {
+            element[0].removeEventListener('transitionend', listenerFunc, false);
+
+            element[0].classList.remove('transitionIn');
+            element[0].classList.add('done');
+
+            element[0].style.opacity = 0;
+
+            deferred.resolve(element);
+          };
+
+          requestAnimationFrame(function () {
+            element[0].addEventListener('transitionend', listenerFunc, false);
+
+            element[0].classList.add('transitionIn');
+            element[0].classList.remove('done');
+
+            element[0].style.opacity = 0;
+            Modal.setPrefixedProperty(element[0], 'transform', transformRule);
+            Modal.setPrefixedProperty(element[0], 'transformOrigin', '0 0 ');
           });
 
-          return defer.promise;
+          return deferred.promise;
         }
+      }, {
+        key: 'cleanup',
+        value: function cleanup(modal) {
+          modal._scope.$destroy();
+          modal._scope = null;
 
-        /**
-         * Close the modals and remove it from the DOM
-         */
-        function close() {
-          if (!element) {
-            return $q.when();
-          }
+          modal._element.remove();
+          modal._element = null;
 
-          var defer = $q.defer();
+          modal._target = null;
 
-          var startRect = element[0].getBoundingClientRect();
-          var endRect = target.getBoundingClientRect();
+          return true;
+        }
+      }, {
+        key: 'getBoundingClientRect',
+        value: function getBoundingClientRect(element) {
+          var box = element.getBoundingClientRect();
 
-          var startValues = {
-            top: startRect.top,
-            left: startRect.left,
-
-            height: startRect.height,
-            width: startRect.width
+          return {
+            top: box.top,
+            left: box.left,
+            width: box.width,
+            height: box.height
           };
-
-          var endValues = {
-            top: endRect.top,
-            left: endRect.left,
-
-            height: endRect.height,
-            width: endRect.width
-          };
-
+        }
+      }, {
+        key: 'setPrefixedProperty',
+        value: function setPrefixedProperty(element, prop, value) {
+          element.style[prop] = value;
+          element.style['-webkit-' + prop] = value;
+        }
+      }, {
+        key: 'getTransformRule',
+        value: function getTransformRule(element, startRect, endRect) {
           var transformDiff = {
             x: 0,
             y: 0
           };
 
-          var computedStyle = window.getComputedStyle(element[0], null);
+          var computedStyle = window.getComputedStyle(element, null);
           var transformStyles = computedStyle.getPropertyValue('transform') || computedStyle.getPropertyValue('-webkit-transform');
 
           if (transformStyles && transformStyles !== 'none') {
-            var transformValues = transformStyles.replace(/(matrix\(|\))/g, '').split(',');
+            var _transformStyles$replace$split = transformStyles.replace(/(matrix\(|\))/g, '').split(',');
 
-            transformDiff.x = +transformValues[4];
-            transformDiff.y = +transformValues[5];
+            var _transformStyles$replace$split2 = _slicedToArray(_transformStyles$replace$split, 6);
+
+            var x = _transformStyles$replace$split2[4];
+            var y = _transformStyles$replace$split2[5];
+
+            transformDiff.x = +x;
+            transformDiff.y = +y;
           }
 
-          var transformRule = 'translate3d(' + (endValues.left - startValues.left + transformDiff.x) + 'px , ' + (endValues.top - startValues.top + transformDiff.y) + 'px,' + '0 )' + 'scale(' + endValues.width / startValues.width + ',' + endValues.height / startValues.height + ')';
-
-          element[0].style.opacity = 1;
-
-          var listenerFunc = function listener() {
-            element[0].classList.remove('transitionIn');
-            element[0].classList.add('done');
-            element[0].style.opacity = 0;
-
-            element[0].removeEventListener('transitionend', listenerFunc, false);
-
-            scope.$destroy();
-            scope = null;
-
-            element.remove();
-            element = null;
-            target = null;
-
-            defer.resolve();
+          var scale = {
+            x: startRect.width / endRect.width,
+            y: startRect.height / endRect.height
           };
 
-          requestAnimationFrame(function () {
-            element[0].classList.add('transitionIn');
-            element[0].classList.remove('done');
+          var translate = {
+            x: startRect.left - endRect.left + transformDiff.x,
+            y: startRect.top - endRect.top + transformDiff.y
+          };
 
-            _setPrefixedProperty(element[0], 'transform', transformRule);
-            _setPrefixedProperty(element[0], 'transformOrigin', '0 0 ');
-
-            element[0].style.opacity = 0;
-
-            element[0].addEventListener('transitionend', listenerFunc, false);
-          });
-
-          return defer.promise;
+          return 'translate3d( ' + translate.x + 'px,' + translate.y + 'px,0 ) scale( ' + scale.x + ',' + scale.y + ' )';
         }
+      }]);
 
-        return {
-          open: open,
-          close: close
-        };
-      }
-    };
+      return Modal;
+    })();
   }
 
   ng.module('sj.expandingModal', []).factory('ExpandingModal', ['$compile', '$rootScope', '$document', '$controller', '$q', '$http', '$templateCache', ExpandingModal]);
